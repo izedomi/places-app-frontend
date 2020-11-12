@@ -1,8 +1,10 @@
 import React from 'react';
 
+import NewPlacesForms from '../components/newplaces/NewPlace';
+
 const NewPlaces = () => {
 
-    return <h1> New Places</h1>
+    return <NewPlacesForms />
 }
 
 export default NewPlaces;
