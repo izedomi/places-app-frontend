@@ -42,6 +42,7 @@ const DUMMY_PLACES = [
         }
 
      }
+     
 ];
 
 
