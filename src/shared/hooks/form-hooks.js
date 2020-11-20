@@ -9,29 +9,24 @@ const formReducer = (state, action) => {
         case "INPUT_CHANGE":
 
             let  isFormValid = true;
-
             for( const inputId in state.inputs){
 
-                if(!state.inputs[inputId]){
-                    continue;
-                }
+               
                 if(action.inputId === inputId){
                     //inputId.value = action.value;
                     isFormValid = isFormValid && action.isValid
-                    //console.log(inputId + " aa " + isFormValid);
-                    
+                    //console.log(inputId + " aa " + isFormValid);   
                 }
                 else{
                     //inputId.value = state.inputs.inputId.value;
-                    isFormValid = isFormValid && state.inputs[inputId].isValid
+                    if(state.inputs[inputId].isValid !== undefined){
+                     isFormValid = isFormValid && state.inputs[inputId].isValid
+                    }
                     //console.log(inputId + " bb " + isFormValid);
-                   
                 }
                 //console.log(inputId + " " + isFormValid);
                 //console.log(inputId + "xxxx " + state.inputs[inputId].isValid)
             }
-            
-
             return {
                 ...state,
                 inputs: {
@@ -47,8 +42,6 @@ const formReducer = (state, action) => {
                 inputs: action.value,
                 isValid: action.isValid
             }
-
-           
         default:
             return state;
     }
@@ -62,6 +55,7 @@ const useForm = (initialState, initialFormValidity) => {
         isValid: initialFormValidity
     });
 
+    
     const onInputChangeHandler = useCallback((id, value, isValid) => {
         dispatch({type: "INPUT_CHANGE", value: value, isValid: isValid, inputId: id})
     }, [])

@@ -86,7 +86,7 @@ import './Auth.css'
             onInput={onInputChangeHandler}
             />
             
-            <Button type="submit" disabled={formState.isValid}> {isLogin ? "Login": "Signup"} {console.log("form state: " + formState.isValid)}</Button>
+            <Button type="submit" disabled={!formState.isValid}> {isLogin ? "Login": "Signup"} {console.log("form state: " + formState.isValid)}</Button>
             <br/><br/>
             <Button inverse onClick={setAuthModeHandler}>{isLogin ? "Goto Signup": "Goto Login"}</Button>
         </form></Card>

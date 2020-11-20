@@ -52,6 +52,7 @@ const Input = (props) => {
     useEffect(() => {
         onInput(id, value, isValid);
     }, [id, onInput, value, isValid])
+    
 
 
     let element = props.element === 'input' ? (
@@ -76,7 +77,7 @@ const Input = (props) => {
         <div className={`form-control ${!inputState.isValid && inputState.isTouched && 'form-control--invalid'}`}>
             <label htmlFor={props.id}>{props.label}</label>
             {element}
-            {!inputState.isValid && <p>{props.errorText}</p>}
+            {!inputState.isValid && inputState.isTouched && <p>{props.errorText}</p>}
         </div>
         
     );

@@ -41,9 +41,11 @@ function App() {
                 <Route path="/places/new" exact>
                     <NewPlaces/>
                 </Route>
+
                 <Route path="/:uid/places" exact>
                     <UserPlaces />
                 </Route>
+                
                 <Route path="/places/:placeId" exact>
                     <UpdatePlace/>
                 </Route>
@@ -57,6 +59,10 @@ function App() {
             <Switch>
                 <Route path="/" exact>
                     <Users/>
+                </Route>
+
+                <Route path="/:uid/places" exact>
+                    <UserPlaces />
                 </Route>
 
                 <Route path="/auth" exact>

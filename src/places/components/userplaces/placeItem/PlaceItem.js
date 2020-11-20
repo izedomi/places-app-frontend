@@ -17,9 +17,11 @@ const PlaceItem = props => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     const showCloseMapHandler = function(){console.log(showMap);setShowMap(false); console.log(showMap)}
-
     const showOpenMapHandler =  function(){console.log(showMap);setShowMap(true); console.log(showMap)}
-    
+
+   // const showCloseMapHandler = () => setShowMap(false);
+  //  const showOpenMapHandler =  () => setShowMap(true);
+
     const openDeleteModalHandler = () => {
         console.log(showDeleteModal);
         setShowDeleteModal(true)
