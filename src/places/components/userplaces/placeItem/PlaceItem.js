@@ -40,7 +40,7 @@ const PlaceItem = props => {
     return (
         
         <React.Fragment> 
-            <Modal
+           <Modal
             show={showMap} 
             onCancel={showCloseMapHandler}
             contentClass="place-item__modal-content"
@@ -83,6 +83,7 @@ const PlaceItem = props => {
                     </div>
                 </Card>
             </li>
+            
         </React.Fragment>
     )
 

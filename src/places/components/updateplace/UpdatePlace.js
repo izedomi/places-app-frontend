@@ -14,8 +14,8 @@ import './UpdatePlace.css';
 const DUMMY_PLACES = [
     {
        id: 'p1',
-       title: "Empire State Building",
-       description: 'One of the tallest building in the world',
+       title: "Empire State",
+       description: 'One of the tallest',
        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Empire_State_Building_%28aerial_view%29.jpg/800px-Empire_State_Building_%28aerial_view%29.jpg',
        address: '20 W 34t St, New York, NY 10001',
        creator: 'u1',
@@ -26,8 +26,8 @@ const DUMMY_PLACES = [
     },
     {
         id: 'p2',
-        title: "Empire State Building",
-        description: 'One of the tallest building in the world',
+        title: "Empire State Building!!!",
+        description: 'One of the tallest building in the world!!!',
         imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Empire_State_Building_%28aerial_view%29.jpg/800px-Empire_State_Building_%28aerial_view%29.jpg',
         address: '20 W 34t St, New York, NY 10001',
         creator: 'u2',
@@ -50,8 +50,8 @@ const DUMMY_PLACES = [
         }
 
      }
+     
 ];
-
 
 
 const UpdatePlace = (props) => {
