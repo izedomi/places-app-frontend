@@ -21,24 +21,24 @@ import './App.css';
 
 let mapApiKey = null;
 
-function addScriptTag(){
-    
-    mapApiKey = MAP_API_KEY();
-
-    var tag = document.createElement('script');
-    tag.src = "https://maps.googleapis.com/maps/api/js?key="+mapApiKey;
-    tag.onload = function () {
-    // callback();
-        console.log("inserted successfully")
-    };
-
-    (document.head || document.documentElement).appendChild(tag);
-  
-}
 
 function App() {
  
-  addScriptTag()
+  //addScriptTag()
+  mapApiKey = MAP_API_KEY();
+ 
+  useCallback(() => {
+      
+        var tag = document.createElement('script');
+        tag.src = "https://maps.googleapis.com/maps/api/js?key="+mapApiKey;
+        tag.onload = function () {
+        // callback();
+            console.log("inserted successfully")
+        };
+
+        (document.head || document.documentElement).appendChild(tag);
+    
+    }, [])
   
   let [isLoggedIn, setIsLoggedIn] = useState(false);
 

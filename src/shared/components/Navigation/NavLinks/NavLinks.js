@@ -25,7 +25,7 @@ export default props => {
                 <NavLink to="/auth"> LOGIN </NavLink>
             </li>}
             {authContext.isLoggedIn && <li>
-                <NavLink to="/auth"> LOG OUT </NavLink>
+                <NavLink to="/"> LOG OUT </NavLink>
             </li>}
         </ul>
     )
