@@ -1,40 +1,61 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 
 import UserList from '../components/userList/UserList';
+import LoadingSpinner from '../../shared/components/UIElement/LoadingSpinnier/LoadingSpinner'
+import ErrorModal from '../../shared/components/UIElement/ErrorModal/ErrorModal'
 
 
 const Users = () => {
 
-    const USERS = [
-       {
-            'id' : 'u1',
-            'name': "Karl Max",
-            'image': 'https://images.pexels.com/photos/1268855/pexels-photo-1268855.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
-            'places': 3
-        },
-        {
-            'id' : 'u2',
-            'name': "Jeni Kas",
-            'image': 'https://images.pexels.com/photos/2659475/pexels-photo-2659475.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260',
-            'places': 7
-        },
-        {
-            'id' : 'u3',
-            'name': "Tab Ings",
-            'image': 'https://images.pexels.com/photos/5022408/pexels-photo-5022408.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260',
-            'places': 1
-        },
-        {
-            'id' : 'u4',
-            'name': "Tab Ings",
-            'image': 'https://images.pexels.com/photos/5022408/pexels-photo-5022408.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260',
-            'places': 1
+    let [isLoading, setIsLoading] = useState(true);
+    let [error, setError] = useState();
+    let [users, setUsers] = useState();
+
+    useEffect(() => {
+
+        const sendRequest = async () => {
+
+            try{
+
+                const response = await fetch("http://localhost:5000/api/users");
+                const responseData = await response.json();
+                
+                if(!response.ok){
+                    throw new Error(responseData.message);
+                }
+
+                //console.log(responseData.users);
+    
+               setUsers(responseData.users);
+            }
+            catch(e){
+                setError(e.message);
+            }
+
+            setIsLoading(false)
+          
         }
 
-    ]
+        sendRequest();
+    }, []);
+
+
+    const removeErrorModal = () => {
+        setError(null);
+    }
 
     return (
-        <UserList userList={USERS} />
+
+        <React.Fragment>
+
+            <ErrorModal error={error} onClear={removeErrorModal}/>
+
+            {isLoading && <div className="center"><LoadingSpinner/></div>}
+
+            {!isLoading && users && <UserList userList={users} />} 
+
+        </React.Fragment>
+       
     );
 }
 

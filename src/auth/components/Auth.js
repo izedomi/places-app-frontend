@@ -30,7 +30,7 @@ import './Auth.css'
             false
         );
 
-        let [isLogin, setAuthMode] = useState(false);
+        let [isLogin, setAuthMode] = useState(true);
         let [isLoading, setIsLoading] = useState(false);
         let [error, setError] = useState()
 
@@ -67,59 +67,57 @@ import './Auth.css'
             event.preventDefault();
             setIsLoading(true);
             var responseData;
+            var url;
+            var data;
             
             try{
                 if(isLogin){
-                   
-                    let data = JSON.stringify({
+                    
+                    console.log("logging in...")
+
+                    data = JSON.stringify({
                         email: formState.inputs.email.value,
                         password: formState.inputs.password.value
                     });
 
-                    const response = await fetch("http://localhost:5000/api/users/login", {
-                        method: "POST",
-                        headers: {"Content-Type" : "application/json"},
-                        body: data
-                    });
-
-                    responseData = await response.json();
-
-                    console.log(responseData);
+                    url = "http://localhost:5000/api/users/login";
                 }
                 else{
 
                     console.log("signing up...")
-                    let data = JSON.stringify({
+
+                    data = JSON.stringify({
                         name: formState.inputs.name.value,
                         email: formState.inputs.email.value,
                         password: formState.inputs.password.value
                     });
 
-                    const response = await fetch("http://localhost:5000/api/users/signup", {
-                        method: "POST",
-                        headers: {"Content-Type" : "application/json"},
-                        body: data
-                    });
-
-                    responseData = await response.json();
-                    if(!response.ok){
-                        throw new Error(responseData.message);
-                    }
-
-                    setIsLoading(false)
-                    authContext.login();
-                    console.log(responseData);
+                    url = "http://localhost:5000/api/users/signup";  
                 }
+
+                const response = await fetch(url, {
+                    method: "POST",
+                    headers: {"Content-Type" : "application/json"},
+                    body: data
+                });
+
+                responseData = await response.json();
+                if(!response.ok){
+                    throw new Error(responseData.message);
+                }
+
+                setIsLoading(false)
+                authContext.login();
 
             }
             catch(e){
 
                 setIsLoading(false)
-                setError(e.message);
+                setError(e.message || "Something went wrong. Please try again!");
                 console.log(error);
             }
            
-            //authContext.login();
+            
         }
 
         const removeErrorModal = () => {
@@ -159,7 +157,7 @@ import './Auth.css'
                 label="Password" 
                 type="password"  
                 validators={[VALIDATOR_REQUIRE()]} 
-                errorText="Please enter a valid password, atleast 5 characters long"
+                errorText="Please enter a valid password, atleast 3 characters long"
                 onInput={onInputChangeHandler}
                 />
                 
