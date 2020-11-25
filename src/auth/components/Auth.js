@@ -1,5 +1,6 @@
 import React, {useState, useContext} from 'react';
 import useForm from '../../shared/hooks/form-hooks'
+import {useHttpClient} from '../../shared/hooks/http-hook'
 
 import {AuthContext} from '../../shared/context/auth-context'
 import Input from '../../shared/components/FormElements/Input/Input'
@@ -16,6 +17,8 @@ import './Auth.css'
 
         const authContext = useContext(AuthContext);
 
+        let {isLoading, error, sendRequest, cancelError} = useHttpClient();
+
         const [formState, onInputChangeHandler, setFormData] = useForm({
                 email: {
                     value: '',
@@ -31,32 +34,22 @@ import './Auth.css'
         );
 
         let [isLogin, setAuthMode] = useState(true);
-        let [isLoading, setIsLoading] = useState(false);
-        let [error, setError] = useState()
-
+       
         const setAuthModeHandler = function(){
             
            console.log("changed mode");
             
            if(!isLogin){
-                
-                setFormData({
-                    ...formState.inputs,
-                    name: undefined
-                })
+                setFormData({...formState.inputs,name: undefined})
             }
             else{
                 setFormData({
                     ...formState.inputs,
-                    name: {
-                        value: '',
-                        isValid: false
-                    },
+                    name: {value: '',isValid: false},
                 }, false)
             }
             
-             
-           setAuthMode(isLogin = !isLogin)
+            setAuthMode(isLogin = !isLogin)
             //return;
         }
 
@@ -65,70 +58,50 @@ import './Auth.css'
         const authSubmitHandler = async event => {
 
             event.preventDefault();
-            setIsLoading(true);
-            var responseData;
             var url;
             var data;
             
-            try{
                 if(isLogin){
                     
                     console.log("logging in...")
+
+                    url = "http://localhost:5000/api/users/login";
 
                     data = JSON.stringify({
                         email: formState.inputs.email.value,
                         password: formState.inputs.password.value
                     });
-
-                    url = "http://localhost:5000/api/users/login";
+                    
                 }
                 else{
 
                     console.log("signing up...")
+
+                    url = "http://localhost:5000/api/users/signup";  
 
                     data = JSON.stringify({
                         name: formState.inputs.name.value,
                         email: formState.inputs.email.value,
                         password: formState.inputs.password.value
                     });
-
-                    url = "http://localhost:5000/api/users/signup";  
+                    
                 }
 
-                const response = await fetch(url, {
-                    method: "POST",
-                    headers: {"Content-Type" : "application/json"},
-                    body: data
-                });
+                const headers = {"Content-Type" : "application/json"}
 
-                responseData = await response.json();
-                if(!response.ok){
-                    throw new Error(responseData.message);
-                }
+                let response = await sendRequest(url, "POST", data, headers)
 
-                setIsLoading(false)
-                authContext.login();
-
-            }
-            catch(e){
-
-                setIsLoading(false)
-                setError(e.message || "Something went wrong. Please try again!");
-                console.log(error);
-            }
-           
-            
+                if(response.status)
+                     authContext.login();
+                    
         }
 
-        const removeErrorModal = () => {
-            setError(null);
-        }
-
+        
         return (
 
             <React.Fragment>
 
-            {error && <ErrorModal error={error} onClear={removeErrorModal}/>}
+            {error && <ErrorModal error={error} onClear={cancelError}/>}
                     
             <Card className="authentication">
             {isLoading && <LoadingSpinner asOverlay/>}
