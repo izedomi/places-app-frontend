@@ -1,60 +1,57 @@
 
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {useParams} from 'react-router-dom'
+
+import {useHttpClient} from '../../shared/hooks/http-hook'
+
 import PlaceList from '../components/userplaces/placeList/PlaceList';
-
-const DUMMY_PLACES = [
-    {
-       id: 'p1',
-       title: "Empire State",
-       description: 'One of the tallest',
-       imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Empire_State_Building_%28aerial_view%29.jpg/800px-Empire_State_Building_%28aerial_view%29.jpg',
-       address: '20 W 34t St, New York, NY 10001',
-       creator: 'u1',
-       location:  {
-            lat: parseFloat('40.7484405'),
-            lng: parseFloat('-73,9878584')
-       }
-    },
-    {
-        id: 'p2',
-        title: "Empire State Building!!!",
-        description: 'One of the tallest building in the world!!!',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Empire_State_Building_%28aerial_view%29.jpg/800px-Empire_State_Building_%28aerial_view%29.jpg',
-        address: '20 W 34t St, New York, NY 10001',
-        creator: 'u2',
-        location: {
-            lat: parseFloat('40.7484405'),
-            lng: parseFloat('-73,9878584')
-        }
-
-     },
-     {
-        id: 'p3',
-        title: "Empire State Building",
-        description: 'One of the tallest building in the world',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Empire_State_Building_%28aerial_view%29.jpg/800px-Empire_State_Building_%28aerial_view%29.jpg',
-        address: '20 W 34t St, New York, NY 10001',
-        creator: 'u2',
-        location:  {
-            lat: parseFloat('40.7484405'),
-            lng: parseFloat('-73,9878584')
-        }
-
-     }
-     
-];
-
+import LoadingSpinner from '../../shared/components/UIElement/LoadingSpinnier/LoadingSpinner'
+import ErrorModal from '../../shared/components/UIElement/ErrorModal/ErrorModal'
 
 
 const UserPlaces = props => {
 
-     let userId = useParams().uid;
-    // console.log(userId)
+    let userId = useParams().uid;
 
-    let userPlaces = DUMMY_PLACES.filter(place => place.creator === userId);
+    let {isLoading, error, sendRequest, cancelError} = useHttpClient();
+    let [userPlaces, setUserPlaces] = useState();
 
-    return <PlaceList items={userPlaces}/>
+    
+    useEffect(() => {
+
+        const fetchUserPlaces = async () => {
+
+            const response = await sendRequest("http://localhost:5000/api/places/user/"+userId)
+            console.log(response)
+            if(response.status)
+               setUserPlaces(response.data)
+        }
+
+        fetchUserPlaces();
+
+    }, [sendRequest, userId]);
+
+
+    const onDeletePlace = (deletedPlaceId) => {
+        
+        setUserPlaces(
+            userPlaces.filter((place) => {
+                return place._id !== deletedPlaceId
+            })
+        );
+    }
+
+  
+    return (
+
+        <React.Fragment>
+            <ErrorModal error={error} onClear={cancelError}/>
+
+            {isLoading && <div className="center"><LoadingSpinner/></div>}
+
+            {!isLoading && userPlaces && <PlaceList items={userPlaces} onDelete={onDeletePlace}/> }
+        </React.Fragment>
+    )
 }
 
 

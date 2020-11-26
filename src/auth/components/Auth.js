@@ -1,6 +1,7 @@
 import React, {useState, useContext} from 'react';
-import useForm from '../../shared/hooks/form-hooks'
+import { useHistory } from 'react-router-dom';
 import {useHttpClient} from '../../shared/hooks/http-hook'
+import useForm from '../../shared/hooks/form-hooks'
 
 import {AuthContext} from '../../shared/context/auth-context'
 import Input from '../../shared/components/FormElements/Input/Input'
@@ -13,10 +14,11 @@ import {VALIDATOR_REQUIRE, VALIDATOR_EMAIL} from '../../utils/validators'
 
 import './Auth.css'
 
+
     const Authenticate = () => {
 
+        const history = useHistory();
         const authContext = useContext(AuthContext);
-
         let {isLoading, error, sendRequest, cancelError} = useHttpClient();
 
         const [formState, onInputChangeHandler, setFormData] = useForm({
@@ -92,8 +94,12 @@ import './Auth.css'
                 let response = await sendRequest(url, "POST", data, headers)
 
                 if(response.status)
-                     authContext.login();
+                    //console.log(response.data.user._id)
+                    if(isLogin){ return authContext.login(response.data.user._id);}  
+                    else{history.push("/login")}
+                        
                     
+                   
         }
 
         

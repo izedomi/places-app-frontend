@@ -1,4 +1,5 @@
-import React from 'react';
+import React, {useContext} from 'react';
+import {useHistory} from 'react-router-dom';
 import Input from '../../../shared/components/FormElements/Input/Input'
 import Button from '../../../shared/components/FormElements/Button/Button'
 import {VALIDATOR_MINLENGTH, VALIDATOR_REQUIRE} from '../../../utils/validators'
@@ -7,6 +8,7 @@ import LoadingSpinner from '../../../shared/components/UIElement/LoadingSpinnier
 import ErrorModal from '../../../shared/components/UIElement/ErrorModal/ErrorModal'
 
 import useForm from '../../../shared/hooks/form-hooks';
+import {AuthContext} from '../../../shared/context/auth-context'
 import {useHttpClient} from '../../../shared/hooks/http-hook';
 
 
@@ -15,7 +17,9 @@ import './NewPlace.css';
 
 const NewPlaces = (props) => {
 
+    const history = useHistory();
     let {isLoading, error, sendRequest, cancelError} = useHttpClient();
+    let authContext = useContext(AuthContext);
 
     const [formState, onInputChangeHandler] = useForm({
             title: {
@@ -38,23 +42,22 @@ const NewPlaces = (props) => {
 
         event.preventDefault();
         console.log("adding new place...")
+        console.log(authContext.userId);
 
         const url = "http://localhost:5000/api/places";
 
         const data = JSON.stringify({
             title: formState.inputs.title.value,
-            description: formState.description.email.value,
+            description: formState.inputs.description.value,
             address: formState.inputs.address.value,
-            creator_id: 'yt'
+            creator_id: authContext.userId
         });
 
         const headers = {"Content-Type" : "application/json"}
 
         const response = await sendRequest(url, "POST", data, headers)
         if(response.status)
-            console.log("New place added successfully")
-
-
+            history.push('/')
     }
 
     return (
@@ -74,7 +77,7 @@ const NewPlaces = (props) => {
 
         <Input 
             id="description"
-            label="Title" 
+            label="Description" 
             type="text"  
             validators={[VALIDATOR_MINLENGTH(5)]} 
             errorText="Place enter a valid description(atleast 5 characters)"

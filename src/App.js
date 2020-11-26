@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {BrowserRouter as Router, Route, Redirect, Switch} from 'react-router-dom'
 
 
@@ -27,28 +27,30 @@ function App() {
   //addScriptTag()
   mapApiKey = MAP_API_KEY();
  
-  useCallback(() => {
-      
-        var tag = document.createElement('script');
-        tag.src = "https://maps.googleapis.com/maps/api/js?key="+mapApiKey;
-        tag.onload = function () {
-        // callback();
-            console.log("inserted successfully")
-        };
-
-        (document.head || document.documentElement).appendChild(tag);
+  useEffect(() => {
+   
+    var tag = document.createElement('script');
+    tag.src = "https://maps.googleapis.com/maps/api/js?key="+mapApiKey;
+    tag.onload = function () {console.log("inserted successfully");};
     
-    }, [])
+    (document.head || document.documentElement).appendChild(tag);
+    
+  }, [])
   
+
   let [isLoggedIn, setIsLoggedIn] = useState(false);
+  let [userId, setUserId] = useState(null);
 
-  const login = useCallback(() => {
+  const login = useCallback((uid) => {
       setIsLoggedIn(true)
+      setUserId(uid)
   }, [])
 
-  const logout = useCallback(() => {
+  const logout = useCallback((uid) => {
       setIsLoggedIn(false)
+      setUserId(uid)
   }, [])
+
 
   let routes;
   if(!mapApiKey){
@@ -108,7 +110,7 @@ function App() {
 
 
   return (
-    <AuthContext.Provider value={{isLoggedIn: isLoggedIn, login: login, logout: logout}}>
+    <AuthContext.Provider value={{isLoggedIn: isLoggedIn, userId:userId, login: login, logout: logout}}>
     <Router>
         <MainNav />
         <main>

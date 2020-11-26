@@ -5,6 +5,11 @@ import Button from '../../../../shared/components/FormElements/Button/Button';
 import Modal from '../../../../shared/components/UIElement/Modal/Modal';
 import Map from '../../../../shared/components/UIElement/Map/Map';
 import {AuthContext} from '../../../../shared/context/auth-context'
+import {useHttpClient} from '../../../../shared/hooks/http-hook'
+
+import LoadingSpinner from '../../../../shared/components/UIElement/LoadingSpinnier/LoadingSpinner'
+import ErrorModal from '../../../../shared/components/UIElement/ErrorModal/ErrorModal'
+
 
 import './PlaceItem.css';
 
@@ -12,12 +17,14 @@ import './PlaceItem.css';
 const PlaceItem = props => {
 
     const authContext = useContext(AuthContext)
-    
+   
     const [showMap, setShowMap] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-    const showCloseMapHandler = function(){console.log(showMap);setShowMap(false); console.log(showMap)}
-    const showOpenMapHandler =  function(){console.log(showMap);setShowMap(true); console.log(showMap)}
+    const showCloseMapHandler = function(){setShowMap(false);}
+    const showOpenMapHandler =  function(){setShowMap(true);}
+
+    let {isLoading, error, sendRequest, cancelError} = useHttpClient();
 
    // const showCloseMapHandler = () => setShowMap(false);
   //  const showOpenMapHandler =  () => setShowMap(true);
@@ -31,15 +38,33 @@ const PlaceItem = props => {
         setShowDeleteModal(false)
     }
 
-    const confirmDelete = () => {
+    const confirmDelete = async() => {
+        
+        setShowDeleteModal(false)
         console.log("deleting...");
+        const url = "http://localhost:5000/api/places/"+props.place._id;
+
+        const response = await sendRequest(url, "DELETE");
+
+        if(response.status)
+            console.log("Deleted successfully")
+            props.onDelete(props.place._id);
+        
     }
     
     let place = props.place;
 
+    if(isLoading){
+        return isLoading && <div className="center"><LoadingSpinner/></div>
+    }
+
     return (
         
         <React.Fragment> 
+
+           <ErrorModal error={error} onClear={cancelError}/>
+
+
            <Modal
             show={showMap} 
             onCancel={showCloseMapHandler}
@@ -49,7 +74,7 @@ const PlaceItem = props => {
             footer={<Button onClick={showCloseMapHandler} >CLOSE</Button>}
             >
                 <div className="map-container">
-                    <Map center={place.location} zoom={10} />
+                    <Map center={place.location} zoom={17} />
                 </div>
             </Modal>
 
@@ -65,11 +90,11 @@ const PlaceItem = props => {
             }>
              <p>You won't be able to revert after this action have been taken.</p>
             </Modal>
-     
+            
             <li className="place-item">
                 <Card className="place-item__content">
                     <div className="place-item__image">
-                        <img src={place.imageUrl} alt={place.title} />
+                        <img src={place.image} alt={place.title} />
                     </div>
                     <div className="place-item__info">
                         <h2>{place.title}</h2>
@@ -78,12 +103,11 @@ const PlaceItem = props => {
                     </div>
                     <div className="place-item__actions">
                         <Button inverse onClick={showOpenMapHandler}>VIEW ON MAP</Button>
-                        {authContext.isLoggedIn && <Button to={'/places/'+place.id}>EDIT</Button>}
-                        {authContext.isLoggedIn && <Button danger onClick={openDeleteModalHandler}>DELETE</Button>}
+                        {authContext.userId === place.creator_id && <Button to={'/places/'+place._id}>EDIT</Button>}
+                        {authContext.userId === place.creator_id && <Button danger onClick={openDeleteModalHandler}>DELETE</Button>}
                     </div>
                 </Card>
             </li>
-            
         </React.Fragment>
     )
 
