@@ -2,6 +2,7 @@ import React, {useContext} from 'react';
 import {useHistory} from 'react-router-dom';
 import Input from '../../../shared/components/FormElements/Input/Input'
 import Button from '../../../shared/components/FormElements/Button/Button'
+import ImageUpload from '../../../shared/components/FormElements/ImageUpload/ImageUpload'
 import {VALIDATOR_MINLENGTH, VALIDATOR_REQUIRE} from '../../../utils/validators'
 
 import LoadingSpinner from '../../../shared/components/UIElement/LoadingSpinnier/LoadingSpinner'
@@ -33,6 +34,10 @@ const NewPlaces = (props) => {
             address: {
                 value: '',
                 isValid: false
+            },
+            image: {
+                value: null,
+                isValid: false
             }
         },
         false
@@ -46,16 +51,17 @@ const NewPlaces = (props) => {
 
         const url = "http://localhost:5000/api/places";
 
-        const data = JSON.stringify({
-            title: formState.inputs.title.value,
-            description: formState.inputs.description.value,
-            address: formState.inputs.address.value,
-            creator_id: authContext.userId
-        });
+        let formData = new FormData()
+        formData.append('title', formState.inputs.title.value)
+        formData.append('description', formState.inputs.description.value)
+        formData.append('address', formState.inputs.address.value)
+        formData.append('creator_id', authContext.userId)
+        formData.append('image', formState.inputs.image.value)
 
-        const headers = {"Content-Type" : "application/json"}
 
-        const response = await sendRequest(url, "POST", data, headers)
+        const headers = {}
+
+        const response = await sendRequest(url, "POST", formData, headers)
         if(response.status)
             history.push('/')
     }
@@ -75,6 +81,8 @@ const NewPlaces = (props) => {
         onInput={onInputChangeHandler}
         />
 
+        <ImageUpload id='image' onInput={onInputChangeHandler}/>
+
         <Input 
             id="description"
             label="Description" 
@@ -92,6 +100,8 @@ const NewPlaces = (props) => {
         errorText="Place enter an address"
         onInput={onInputChangeHandler}
        /> 
+
+       
 
         <Button disabled={!formState.isValid} type="submit">ADD PLACE</Button>
     </form>

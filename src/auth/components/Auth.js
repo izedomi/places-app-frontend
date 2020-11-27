@@ -6,6 +6,7 @@ import useForm from '../../shared/hooks/form-hooks'
 import {AuthContext} from '../../shared/context/auth-context'
 import Input from '../../shared/components/FormElements/Input/Input'
 import Button from '../../shared/components/FormElements/Button/Button'
+import ImageUpload from '../../shared/components/FormElements/ImageUpload/ImageUpload'
 import Card from '../../shared/components/UIElement/Card/Card'
 import LoadingSpinner from '../../shared/components/UIElement/LoadingSpinnier/LoadingSpinner'
 import ErrorModal from '../../shared/components/UIElement/ErrorModal/ErrorModal'
@@ -42,12 +43,13 @@ import './Auth.css'
            console.log("changed mode");
             
            if(!isLogin){
-                setFormData({...formState.inputs,name: undefined})
+                setFormData({...formState.inputs, name: undefined, image: undefined})
             }
             else{
                 setFormData({
                     ...formState.inputs,
-                    name: {value: '',isValid: false},
+                    name: {value: '', isValid: false},
+                    image: {value: null, isValid: false}
                 }, false)
             }
             
@@ -62,6 +64,7 @@ import './Auth.css'
             event.preventDefault();
             var url;
             var data;
+            var headers;
             
                 if(isLogin){
                     
@@ -73,6 +76,8 @@ import './Auth.css'
                         email: formState.inputs.email.value,
                         password: formState.inputs.password.value
                     });
+
+                    headers = {"Content-Type" : "application/json"};
                     
                 }
                 else{
@@ -81,15 +86,17 @@ import './Auth.css'
 
                     url = "http://localhost:5000/api/users/signup";  
 
-                    data = JSON.stringify({
-                        name: formState.inputs.name.value,
-                        email: formState.inputs.email.value,
-                        password: formState.inputs.password.value
-                    });
+                   
+                    data = new FormData();
+                    data.append('name', formState.inputs.name.value);
+                    data.append('email', formState.inputs.email.value);
+                    data.append('password', formState.inputs.password.value);
+                    data.append('image', formState.inputs.image.value)
                     
+                    headers = {};
                 }
 
-                const headers = {"Content-Type" : "application/json"}
+                //const headers = {"Content-Type" : "application/json"}
 
                 let response = await sendRequest(url, "POST", data, headers)
 
@@ -97,8 +104,7 @@ import './Auth.css'
                     //console.log(response.data.user._id)
                     if(isLogin){ return authContext.login(response.data.user._id);}  
                     else{history.push("/login")}
-                        
-                    
+                             
                    
         }
 
@@ -110,16 +116,23 @@ import './Auth.css'
             {error && <ErrorModal error={error} onClear={cancelError}/>}
                     
             <Card className="authentication">
-            {isLoading && <LoadingSpinner asOverlay/>}
+            
                 <form>
+                {isLoading && <LoadingSpinner asOverlay/>}
                 <h2> {isLogin ? "Login Required" : "Create An Account"}</h2>
                 <hr/>
-            {!isLogin && <Input element='input' 
+                {!isLogin && <Input element='input' 
                 id="name"
                 label="Name" 
                 type="text"  
                 validators={[VALIDATOR_REQUIRE()]} 
                 errorText="Please enter a valid name"
+                onInput={onInputChangeHandler}/>
+                }
+
+                {!isLogin && <ImageUpload 
+                center 
+                id='image'
                 onInput={onInputChangeHandler}/>
                 }
 
