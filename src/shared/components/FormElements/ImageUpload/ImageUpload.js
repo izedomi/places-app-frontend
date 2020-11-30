@@ -67,7 +67,6 @@ const ImageUpload = props => {
                 {previewUrl && <div className="image-upload__preview">
                     <img src={previewUrl} alt="upload-preview" />
                 </div>}
-                {!previewUrl && <small>Please select an image</small>}
                 <Button type='button' onClick={pickImageHandler}>PICK IMAGE</Button>
             </div>
 

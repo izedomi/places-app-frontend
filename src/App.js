@@ -2,9 +2,6 @@ import React, { useEffect } from 'react';
 import {BrowserRouter as Router, Route, Redirect, Switch} from 'react-router-dom'
 
 
-import {useState, useCallback} from 'react';
-
-
 import MainNav from './shared/components/Navigation/MainNav/MainNav';
 import Users from './users/pages/Users';
 import NewPlaces from './places/pages/NewPlaces';
@@ -14,6 +11,7 @@ import Auth from './auth/pages/Auth';
 import Card from './shared/components/UIElement/Card/Card';
 
 import {AuthContext} from './shared/context/auth-context';
+import useAuth from './shared/hooks/auth-hook';
 import {MAP_API_KEY} from './utils/api_key';
 
 
@@ -27,6 +25,9 @@ function App() {
   //addScriptTag()
   mapApiKey = MAP_API_KEY();
  
+  let {token, userId, login, logout} = useAuth();
+  
+
   useEffect(() => {
    
     var tag = document.createElement('script');
@@ -35,21 +36,7 @@ function App() {
     
     (document.head || document.documentElement).appendChild(tag);
     
-  }, [])
-  
-
-  let [isLoggedIn, setIsLoggedIn] = useState(false);
-  let [userId, setUserId] = useState(null);
-
-  const login = useCallback((uid) => {
-      setIsLoggedIn(true)
-      setUserId(uid)
-  }, [])
-
-  const logout = useCallback((uid) => {
-      setIsLoggedIn(false)
-      setUserId(uid)
-  }, [])
+  }, [])   
 
 
   let routes;
@@ -66,7 +53,7 @@ function App() {
             </div>
         )
   }
-  else if(isLoggedIn){
+  else if(token){
         routes = (
             <Switch>
                 <Route path="/" exact>
@@ -110,7 +97,15 @@ function App() {
 
 
   return (
-    <AuthContext.Provider value={{isLoggedIn: isLoggedIn, userId:userId, login: login, logout: logout}}>
+    <AuthContext.Provider value={
+        {
+        isLoggedIn: !!token, 
+        token: token,
+        userId: userId, 
+        login: login, 
+        logout: logout}
+        }
+    >
     <Router>
         <MainNav />
         <main>

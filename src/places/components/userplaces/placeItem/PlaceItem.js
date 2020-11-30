@@ -44,11 +44,19 @@ const PlaceItem = props => {
         console.log("deleting...");
         const url = "http://localhost:5000/api/places/"+props.place._id;
 
-        const response = await sendRequest(url, "DELETE");
+       //const headers = {}
+       const headers = {'authorization' : `Bearer ${authContext.token}`}
 
-        if(response.status)
+        const response = await sendRequest(url, "DELETE", null, headers);
+
+
+        console.log(response)
+
+        if(response.status){
             console.log("Deleted successfully")
             props.onDelete(props.place._id);
+        }
+      
         
     }
     
@@ -63,7 +71,6 @@ const PlaceItem = props => {
         <React.Fragment> 
 
            <ErrorModal error={error} onClear={cancelError}/>
-
 
            <Modal
             show={showMap} 

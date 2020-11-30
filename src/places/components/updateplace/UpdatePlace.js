@@ -99,7 +99,10 @@ const UpdatePlace = (props) => {
             description: formState.inputs.description.value,
         });
 
-        const headers = {"Content-Type" : "application/json"}
+        const headers = {
+            "Content-Type" : "application/json",
+            'Authorization': `Bearer ${authContext.token}`
+        }
 
         const response = await sendRequest(url, "PATCH", data, headers)
         //console.log(response.data);
@@ -115,6 +118,7 @@ const UpdatePlace = (props) => {
             <ErrorModal error={error} onClear={cancelError}/>
 
             {!isLoading && indentifiedPlace && <form className="place-form">
+            {isLoading && <LoadingSpinner asOverlay/>}
             <Input element='input' 
             id="title"
             label="Title" 

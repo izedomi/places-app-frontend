@@ -55,11 +55,10 @@ const NewPlaces = (props) => {
         formData.append('title', formState.inputs.title.value)
         formData.append('description', formState.inputs.description.value)
         formData.append('address', formState.inputs.address.value)
-        formData.append('creator_id', authContext.userId)
         formData.append('image', formState.inputs.image.value)
 
 
-        const headers = {}
+        const headers = {'authorization' : 'Bearer '+ authContext.token}
 
         const response = await sendRequest(url, "POST", formData, headers)
         if(response.status)
@@ -69,16 +68,16 @@ const NewPlaces = (props) => {
     return (
         <React.Fragment>
         {error && <ErrorModal error={error} onClear={cancelError}/>}
-         {isLoading && <LoadingSpinner asOverlay/>}
-
+        
         <form onSubmit={addNewPlace} className="place-form">
+        {isLoading && <LoadingSpinner asOverlay/>}
         <Input element='input' 
-        id="title"
-        label="Title" 
-        type="text"  
-        validators={[VALIDATOR_REQUIRE()]} 
-        errorText="Place enter a valid title"
-        onInput={onInputChangeHandler}
+            id="title"
+            label="Title" 
+            type="text"  
+            validators={[VALIDATOR_REQUIRE()]} 
+            errorText="Place enter a valid title"
+            onInput={onInputChangeHandler}
         />
 
         <ImageUpload id='image' onInput={onInputChangeHandler}/>

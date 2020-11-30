@@ -86,7 +86,6 @@ import './Auth.css'
 
                     url = "http://localhost:5000/api/users/signup";  
 
-                   
                     data = new FormData();
                     data.append('name', formState.inputs.name.value);
                     data.append('email', formState.inputs.email.value);
@@ -102,7 +101,8 @@ import './Auth.css'
 
                 if(response.status)
                     //console.log(response.data.user._id)
-                    if(isLogin){ return authContext.login(response.data.user._id);}  
+                    console.log(response)
+                    if(isLogin){ return authContext.login(response.data.user._id, response.data.token);}  
                     else{history.push("/login")}
                              
                    
