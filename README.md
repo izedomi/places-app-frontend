@@ -10,5 +10,6 @@ Image upload \
 Form Validation \
 REST API \
 Custom Hooks \
+Code Spliting \
 Transactions \
 CRUD Operations
